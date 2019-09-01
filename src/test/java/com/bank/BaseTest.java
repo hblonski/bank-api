@@ -1,7 +1,7 @@
 package com.bank;
 
+import com.bank.dto.AccountDTO;
 import com.bank.dto.ClientDTO;
-import com.google.gson.Gson;
 import org.glassfish.jersey.test.JerseyTest;
 
 import javax.validation.ConstraintViolation;
@@ -32,10 +32,6 @@ public class BaseTest extends JerseyTest {
         return httpClient.send(request, HttpResponse.BodyHandlers.ofString());
     }
 
-    protected String validMockJson() {
-        return new Gson().toJson(mockClientDTO());
-    }
-
     protected ConstraintViolationException mockViolationException(String message) {
         ConstraintViolation violation = mock(ConstraintViolation.class);
         Set<ConstraintViolation<?>> violations = new HashSet<>();
@@ -56,5 +52,14 @@ public class BaseTest extends JerseyTest {
         mockClient.setProfession("test");
         mockClient.setState("test");
         return mockClient;
+    }
+
+    protected AccountDTO mockAccountDTO() {
+        AccountDTO accountDTO = new AccountDTO();
+        accountDTO.setId(1L);
+        accountDTO.setBalance(0.0);
+        accountDTO.setNumber("123-4");
+        accountDTO.setBank("test");
+        return accountDTO;
     }
 }

@@ -4,7 +4,6 @@ import org.hibernate.Session;
 import org.hibernate.cfg.Configuration;
 
 import java.io.Serializable;
-import java.util.List;
 
 public class BaseDaoImpl implements BaseDao {
 
@@ -19,8 +18,8 @@ public class BaseDaoImpl implements BaseDao {
     }
 
     @Override
-    public <T> List<T> find(Class<T> clazz, String query) {
-        return databaseSession.createQuery(query, clazz).getResultList();
+    public <T> T findById(Class<T> clazz, Serializable id) {
+        return databaseSession.get(clazz,id);
     }
 
     @Override

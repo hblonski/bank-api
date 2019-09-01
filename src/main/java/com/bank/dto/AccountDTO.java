@@ -1,23 +1,17 @@
-package com.bank.data.entity;
+package com.bank.dto;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.Table;
-import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
+import javax.xml.bind.annotation.XmlRootElement;
 
-@Entity
-@Table(name = "ACCOUNT", uniqueConstraints = @UniqueConstraint(columnNames = "number"))
-public class Account {
+@XmlRootElement
+public class AccountDTO {
 
-    public Account() {
-        zeroBalance();
+    public AccountDTO() {
+        // Empty
     }
 
-    public Account(
+    public AccountDTO(
             Long id,
             @NotEmpty(message = "Number cannot be empty!") String number,
             @NotNull(message = "Balance cannot be null!") Double balance,
@@ -29,19 +23,14 @@ public class Account {
         this.bank = bank;
     }
 
-    @Id
-    @GeneratedValue
     private Long id;
 
-    @Column(nullable = false)
     @NotEmpty(message = "Number cannot be empty!")
     private String number;
 
-    @Column(nullable = false)
     @NotNull(message = "Balance cannot be null!")
     private Double balance;
 
-    @Column(nullable = false)
     @NotEmpty(message = "Bank cannot be empty!")
     private String bank;
 
@@ -75,9 +64,5 @@ public class Account {
 
     public void setBank(String bank) {
         this.bank = bank;
-    }
-
-    public void zeroBalance() {
-        this.balance = 0.0;
     }
 }

@@ -2,6 +2,7 @@ package com.bank.dto;
 
 import com.bank.data.entity.Account;
 
+import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import javax.xml.bind.annotation.XmlRootElement;
 
@@ -38,22 +39,22 @@ public class ClientDTO {
 
     private Long id;
 
-    @NotNull
+    @NotEmpty(message = "Name cannot be empty!")
     private String name;
 
-    @NotNull
+    @NotEmpty(message = "Document value cannot be empty!")
     private String documentNumber;
 
-    @NotNull
+    @NotEmpty(message = "Address cannot be empty!")
     private String address;
 
-    @NotNull
+    @NotEmpty(message = "City cannot be empty!")
     private String city;
 
-    @NotNull
+    @NotEmpty(message = "State cannot be empty!")
     private String state;
 
-    @NotNull
+    @NotEmpty(message = "Country cannot be empty!")
     private String country;
 
     private String profession;

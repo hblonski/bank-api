@@ -47,7 +47,7 @@ public class ClientControllerTest extends BaseTest {
     public void should_returnCreatedClientInfo_when_clientCreated() throws IOException, InterruptedException {
         ClientDTO created = mockClientDTO();
         when(clientService.save(any())).thenReturn(created);
-        HttpResponse response = postHttpRequest(CONTROLLER_PATH + "/create", validMockJson());
+        HttpResponse response = postHttpRequest(CONTROLLER_PATH + "/create", new Gson().toJson(mockClientDTO()));
         assertEquals(Response.Status.CREATED.getStatusCode(), response.statusCode());
         assertEquals(created.getId(), new Gson().fromJson(response.body().toString(), ClientDTO.class).getId());
     }
@@ -57,7 +57,7 @@ public class ClientControllerTest extends BaseTest {
         String violationMessage = "violation";
         ConstraintViolationException exception = mockViolationException(violationMessage);
         when(clientService.save(any())).thenThrow(exception);
-        HttpResponse response = postHttpRequest(CONTROLLER_PATH + "/create", validMockJson());
+        HttpResponse response = postHttpRequest(CONTROLLER_PATH + "/create", new Gson().toJson(mockClientDTO()));
         assertEquals(Response.Status.BAD_REQUEST.getStatusCode(), response.statusCode());
         assertEquals(violationMessage, response.body().toString());
     }

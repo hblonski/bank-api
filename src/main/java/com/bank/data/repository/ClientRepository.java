@@ -2,6 +2,9 @@ package com.bank.data.repository;
 
 import com.bank.data.entity.Client;
 
+import javax.validation.constraints.NotNull;
+
 public interface ClientRepository {
-    Client save(Client client);
+    Client save(@NotNull Client client);
+    Client findById(@NotNull Long Id);
 }

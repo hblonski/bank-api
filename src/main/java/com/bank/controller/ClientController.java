@@ -2,7 +2,7 @@ package com.bank.controller;
 
 import com.bank.dto.ClientDTO;
 import com.bank.service.ClientService;
-import com.bank.util.ValidatorUtil;
+import com.bank.util.ResponseUtil;
 
 import javax.inject.Inject;
 import javax.validation.ConstraintViolationException;
@@ -23,16 +23,12 @@ public class ClientController {
     @Path("/create")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public Response create(ClientDTO client) {
+    public Response save(ClientDTO client) {
         try {
             ClientDTO saved = clientService.save(client);
-            return Response.status(Response.Status.CREATED)
-                    .entity(saved)
-                    .build();
+            return ResponseUtil.handleSaved(saved);
         } catch (ConstraintViolationException e) {
-            return Response.status(Response.Status.BAD_REQUEST)
-                    .entity(ValidatorUtil.createValidationMessage(e.getConstraintViolations()))
-                    .build();
+            return ResponseUtil.handleConstraintViolationException(e);
         }
     }
 }
