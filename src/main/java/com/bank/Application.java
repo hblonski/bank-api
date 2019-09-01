@@ -1,7 +1,10 @@
 package com.bank;
 
+import com.bank.servlet.BankApi;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.servlet.ServletContextHandler;
+import org.eclipse.jetty.servlet.ServletHolder;
+import org.glassfish.jersey.servlet.ServletContainer;
 
 import java.net.InetSocketAddress;
 
@@ -11,9 +14,7 @@ public class Application {
     private static final int PORT = 8080;
 
     public static void main(String[] args) throws Exception {
-        final Server server = new Server(new InetSocketAddress(HOST, PORT));
-        server.setHandler(createContextHandler());
-
+        Server server = createServer();
         try {
             server.start();
             server.join();
@@ -22,11 +23,12 @@ public class Application {
         }
     }
 
-    private static ServletContextHandler createContextHandler() {
+    public static Server createServer() {
+        final Server server = new Server(new InetSocketAddress(HOST, PORT));
         ServletContextHandler handler = new ServletContextHandler();
-
-        // TODO add servlets
-
-        return handler;
+        ServletHolder servletHolder = new ServletHolder(new ServletContainer(new BankApi()));
+        handler.addServlet(servletHolder, BankApi.PATH);
+        server.setHandler(handler);
+        return server;
     }
 }
