@@ -43,11 +43,4 @@ public class BaseDaoImpl implements BaseDao {
         Predicate[] predicatesArray = predicates.toArray(new Predicate[0]);
         return databaseSession.createQuery(query.select(root).where(builder.and(predicatesArray))).getResultList();
     }
-
-    @Override
-    public void delete(Object o) {
-        databaseSession.getTransaction().begin();
-        databaseSession.remove(o);
-        databaseSession.getTransaction().commit();
-    }
 }

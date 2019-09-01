@@ -11,6 +11,4 @@ public interface BaseDao {
     <T> T findById(Class<T> clazz, Serializable id);
 
     <T> List<T> find(Class<T> clazz, Map<String, Object> fieldValues);
-
-    void delete(Object o);
 }
