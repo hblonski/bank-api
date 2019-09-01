@@ -1,7 +1,6 @@
 package com.bank.dto;
 
 import javax.validation.constraints.NotEmpty;
-import javax.validation.constraints.NotNull;
 import javax.xml.bind.annotation.XmlRootElement;
 
 @XmlRootElement
@@ -14,8 +13,8 @@ public class AccountDTO {
     public AccountDTO(
             Long id,
             @NotEmpty(message = "Number cannot be empty!") String number,
-            @NotNull(message = "Balance cannot be null!") Double balance,
-            @NotEmpty(message = "Bank cannot be empty!") String bank
+            Double balance,
+            @NotEmpty(message = "Bank cannot be empty!") Integer bank
     ) {
         this.id = id;
         this.number = number;
@@ -28,11 +27,10 @@ public class AccountDTO {
     @NotEmpty(message = "Number cannot be empty!")
     private String number;
 
-    @NotNull(message = "Balance cannot be null!")
     private Double balance;
 
     @NotEmpty(message = "Bank cannot be empty!")
-    private String bank;
+    private Integer bank;
 
     public Long getId() {
         return id;
@@ -58,11 +56,11 @@ public class AccountDTO {
         this.balance = balance;
     }
 
-    public String getBank() {
+    public Integer getBank() {
         return bank;
     }
 
-    public void setBank(String bank) {
+    public void setBank(Integer bank) {
         this.bank = bank;
     }
 }

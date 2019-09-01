@@ -4,6 +4,7 @@ import com.bank.data.entity.Account;
 import com.bank.data.entity.Client;
 import com.bank.data.repository.AccountRepository;
 import com.bank.data.repository.ClientRepository;
+import com.bank.data.value.BankProperties;
 import com.bank.dto.AccountDTO;
 import com.bank.mapper.AccountDtoToAccountMapper;
 import com.bank.mapper.AccountToAccountDtoMapper;
@@ -26,6 +27,7 @@ public class AccountServiceImpl implements AccountService {
             @NotNull Long clientId,
             @NotNull AccountDTO accountDTO
     ) throws EntityNotFoundException, EntityExistsException {
+        accountDTO.setBank(BankProperties.BANK_CODE);
         Account account = new AccountDtoToAccountMapper().map(accountDTO);
         account.zeroBalance();
         Client client = clientRepository.findById(clientId);

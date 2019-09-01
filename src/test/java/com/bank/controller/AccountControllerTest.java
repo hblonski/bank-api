@@ -28,6 +28,7 @@ import static org.mockito.Mockito.when;
 public class AccountControllerTest extends BaseTest {
 
     private static final String CONTROLLER_PATH = "account";
+    private static final String SAVE_ACC_PATH = CONTROLLER_PATH + "/create";
 
     @Mock
     private AccountService accountService;
@@ -58,42 +59,30 @@ public class AccountControllerTest extends BaseTest {
     }
 
     @Test
-    public void should_returnErrorMessage_when_clientNotFound() throws IOException, InterruptedException {
+    public void should_returnErrorMessage_when_clientNotFound() throws Exception {
         String errorMessage = "not found";
-        postAccountCreationRequestAndVerifyError(new EntityNotFoundException(errorMessage),
-                                                 Response.Status.NOT_FOUND,
-                                                 errorMessage);
-    }
-
-    @Test
-    public void should_returnErrorMessage_when_clientAlreadyHasAccount() throws IOException, InterruptedException {
-        String errorMessage = "already has account";
-        postAccountCreationRequestAndVerifyError(new EntityExistsException(errorMessage),
-                                                 Response.Status.BAD_REQUEST,
-                                                 errorMessage);
-    }
-
-    @Test
-    public void should_returnErrorMessage_when_constraintViolations() throws IOException, InterruptedException {
-        String errorMessage = "violations";
-        ConstraintViolationException exception = mockViolationException(errorMessage);
-        postAccountCreationRequestAndVerifyError(exception,
-                                                 Response.Status.BAD_REQUEST,
-                                                 errorMessage);
-    }
-
-    private void postAccountCreationRequestAndVerifyError(
-            Exception expectedError,
-            Response.Status status,
-            String errorMessage
-    ) throws IOException, InterruptedException {
         Long clientId = 1L;
-        AccountDTO saved = mockAccountDTO();
-        saved.setId(clientId);
         String idParam = "?clientId=" + clientId;
-        when(accountService.save(any(), any())).thenThrow(expectedError);
-        HttpResponse response = postHttpRequest(CONTROLLER_PATH + "/create" + idParam, new Gson().toJson(saved));
-        assertEquals(status.getStatusCode(), response.statusCode());
-        assertEquals(errorMessage, response.body());
+        when(accountService.save(any(), any())).thenThrow(new EntityNotFoundException(errorMessage));
+        postRequestAndVerifyError(errorMessage, Response.Status.NOT_FOUND, SAVE_ACC_PATH + idParam, mockAccountDTO());
+    }
+
+    @Test
+    public void should_returnErrorMessage_when_clientAlreadyHasAccount() throws Exception {
+        String errorMessage = "already has account";
+        Long clientId = 1L;
+        String idParam = "?clientId=" + clientId;
+        when(accountService.save(any(), any())).thenThrow(new EntityExistsException(errorMessage));
+        postRequestAndVerifyError(errorMessage, Response.Status.BAD_REQUEST, SAVE_ACC_PATH + idParam, mockAccountDTO());
+    }
+
+    @Test
+    public void should_returnErrorMessage_when_constraintViolations() throws Exception {
+        String errorMessage = "violations";
+        Long clientId = 1L;
+        String idParam = "?clientId=" + clientId;
+        ConstraintViolationException exception = mockViolationException(errorMessage);
+        when(accountService.save(any(), any())).thenThrow(exception);
+        postRequestAndVerifyError(errorMessage, Response.Status.BAD_REQUEST, SAVE_ACC_PATH + idParam, mockAccountDTO());
     }
 }

@@ -1,5 +1,7 @@
 package com.bank.data.entity;
 
+import com.bank.data.value.BankProperties;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -20,8 +22,8 @@ public class Account {
     public Account(
             Long id,
             @NotEmpty(message = "Number cannot be empty!") String number,
-            @NotNull(message = "Balance cannot be null!") Double balance,
-            @NotEmpty(message = "Bank cannot be empty!") String bank
+            Double balance,
+            @NotEmpty(message = "Bank cannot be empty!") Integer bank
     ) {
         this.id = id;
         this.number = number;
@@ -38,12 +40,11 @@ public class Account {
     private String number;
 
     @Column(nullable = false)
-    @NotNull(message = "Balance cannot be null!")
     private Double balance;
 
     @Column(nullable = false)
-    @NotEmpty(message = "Bank cannot be empty!")
-    private String bank;
+    @NotNull(message = "Bank cannot be null!")
+    private Integer bank;
 
     public Long getId() {
         return id;
@@ -69,15 +70,19 @@ public class Account {
         this.balance = balance;
     }
 
-    public String getBank() {
+    public Integer getBank() {
         return bank;
     }
 
-    public void setBank(String bank) {
+    public void setBank(Integer bank) {
         this.bank = bank;
     }
 
     public void zeroBalance() {
         this.balance = 0.0;
+    }
+
+    public boolean belongsToThisBank() {
+        return BankProperties.BANK_CODE.equals(this.bank);
     }
 }

@@ -29,7 +29,7 @@ public class AccountController {
     public Response save(@QueryParam("clientId") Long clientId, AccountDTO accountDTO) {
         try {
             AccountDTO saved = accountService.save(clientId, accountDTO);
-            return ResponseUtil.handleSaved(saved);
+            return ResponseUtil.handleGenericPostSuccess(saved, Response.Status.CREATED);
         } catch (ConstraintViolationException e) {
             return ResponseUtil.handleConstraintViolationException(e);
         } catch (EntityNotFoundException e) {

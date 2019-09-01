@@ -9,14 +9,14 @@ public class ClientDtoToClientMapper implements Mapper<ClientDTO, Client> {
     @Override
     public Client map(@NotNull ClientDTO from) {
         return new Client(from.getId(),
-                from.getName(),
-                from.getDocumentNumber(),
-                from.getAddress(),
-                from.getCity(),
-                from.getState(),
-                from.getCountry(),
-                from.getProfession(),
-                from.getPhone(),
-                from.getAccount());
+                          from.getName(),
+                          from.getDocumentNumber(),
+                          from.getAddress(),
+                          from.getCity(),
+                          from.getState(),
+                          from.getCountry(),
+                          from.getProfession(),
+                          from.getPhone(),
+                          from.getAccount());
     }
 }

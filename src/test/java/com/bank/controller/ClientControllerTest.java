@@ -26,6 +26,7 @@ import static org.mockito.Mockito.when;
 public class ClientControllerTest extends BaseTest {
 
     private static final String CONTROLLER_PATH = "client";
+    private static final String CREATE_PATH = CONTROLLER_PATH + "/create";
 
     @Mock
     private ClientService clientService;
@@ -47,18 +48,16 @@ public class ClientControllerTest extends BaseTest {
     public void should_returnCreatedClientInfo_when_clientCreated() throws IOException, InterruptedException {
         ClientDTO created = mockClientDTO();
         when(clientService.save(any())).thenReturn(created);
-        HttpResponse response = postHttpRequest(CONTROLLER_PATH + "/create", new Gson().toJson(mockClientDTO()));
+        HttpResponse response = postHttpRequest(CREATE_PATH, new Gson().toJson(mockClientDTO()));
         assertEquals(Response.Status.CREATED.getStatusCode(), response.statusCode());
         assertEquals(created.getId(), new Gson().fromJson(response.body().toString(), ClientDTO.class).getId());
     }
 
     @Test
-    public void should_returnErrorMessage_when_validationErrorsInCreation() throws IOException, InterruptedException {
+    public void should_returnErrorMessage_when_validationErrorsInCreation() throws Exception {
         String violationMessage = "violation";
         ConstraintViolationException exception = mockViolationException(violationMessage);
         when(clientService.save(any())).thenThrow(exception);
-        HttpResponse response = postHttpRequest(CONTROLLER_PATH + "/create", new Gson().toJson(mockClientDTO()));
-        assertEquals(Response.Status.BAD_REQUEST.getStatusCode(), response.statusCode());
-        assertEquals(violationMessage, response.body().toString());
+        postRequestAndVerifyError(violationMessage, Response.Status.BAD_REQUEST, CREATE_PATH, mockClientDTO());
     }
 }

@@ -1,32 +1,26 @@
-package com.bank.data.entity;
+package com.bank.dto;
 
 import com.bank.data.value.TransactionType;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.Table;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
+import javax.xml.bind.annotation.XmlRootElement;
 import java.time.Instant;
 
-@Entity
-@Table(name = "TRANSACTION")
-public class Transaction {
+@XmlRootElement
+public class TransactionDTO {
 
-    public Transaction() {
+    public TransactionDTO() {
         // Empty
     }
 
-    public Transaction(
+    public TransactionDTO(
             Long id,
             TransactionType type,
             @NotNull(message = "Date must not be null!") Instant date,
-            @NotNull(message = "Value must not be null!") Double value,
+            @NotNull(message = "Value must not be null!") @Min(value = 0L, message = "The value must be positive") Double value,
             @NotEmpty(message = "Account must not be empty!") String originAccount,
             @NotNull(message = "Bank must not be null!") Integer originAccountBank,
             String destinationAccount,
@@ -44,38 +38,28 @@ public class Transaction {
         this.description = description;
     }
 
-    @Id
-    @GeneratedValue
     private Long id;
 
-    @Column
-    @Enumerated(EnumType.STRING)
+    @JsonIgnore
     private TransactionType type;
 
-    @Column(nullable = false)
     @NotNull(message = "Date must not be null!")
     private Instant date;
 
-    @Column(nullable = false)
     @NotNull(message = "Value must not be null!")
     @Min(value = 0L, message = "The value must be positive")
     private Double value;
 
-    @Column(nullable = false)
     @NotEmpty(message = "Account must not be empty!")
     private String originAccount;
 
-    @Column(nullable = false)
     @NotNull(message = "Bank must not be null!")
     private Integer originAccountBank;
 
-    @Column
     private String destinationAccount;
 
-    @Column
     private Integer destinationAccountBank;
 
-    @Column
     private String description;
 
     public Long getId() {
@@ -98,6 +82,7 @@ public class Transaction {
         return date;
     }
 
+    @JsonIgnore
     public void setDate(Instant date) {
         this.date = date;
     }
