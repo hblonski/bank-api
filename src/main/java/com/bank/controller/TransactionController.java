@@ -42,4 +42,22 @@ public class TransactionController {
             return ResponseUtil.handleGenericException(e, Response.Status.NOT_FOUND);
         }
     }
+
+    @POST
+    @Path("/deposit")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response deposit(TransactionDTO transactionDTO) {
+        transactionDTO.setType(TransactionType.DEPOSIT);
+        try {
+            TransactionDTO deposit = transactionService.deposit(transactionDTO);
+            return ResponseUtil.handleGenericPostSuccess(deposit, Response.Status.OK);
+        } catch (TransactionException e) {
+            return ResponseUtil.handleGenericException(e, Response.Status.BAD_REQUEST);
+        } catch (SQLDataException e) {
+            return ResponseUtil.handleInternalServerError();
+        }catch (ConstraintViolationException e) {
+            return ResponseUtil.handleConstraintViolationException(e);
+        }
+    }
 }

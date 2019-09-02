@@ -2,6 +2,7 @@ package com.bank.service;
 
 import com.bank.BaseTest;
 import com.bank.data.entity.Account;
+import com.bank.data.entity.Transaction;
 import com.bank.data.repository.AccountRepository;
 import com.bank.data.repository.TransactionRepository;
 import com.bank.data.value.BankProperties;
@@ -22,6 +23,7 @@ import javax.ws.rs.core.Application;
 import java.security.InvalidParameterException;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -65,8 +67,10 @@ public class TransactionServiceTest extends BaseTest {
                                                    transactionDTO.getDestinationAccountBank()))
                 .thenReturn(destination);
         when(accountRepository.save(any())).thenReturn(mock(Account.class));
-        transactionService.transfer(transactionDTO);
+        when(transactionRepository.save(any())).thenReturn(mock(Transaction.class));
+        TransactionDTO transfer = transactionService.transfer(transactionDTO);
         assertEquals(transactionDTO.getValue(), destination.getBalance());
+        assertNotNull(transfer);
     }
 
     @Test
@@ -84,8 +88,9 @@ public class TransactionServiceTest extends BaseTest {
                                                    transactionDTO.getOriginAccountBank()))
                 .thenReturn(origin);
         when(accountRepository.save(any())).thenReturn(mock(Account.class));
-
-        transactionService.transfer(transactionDTO);
+        when(transactionRepository.save(any())).thenReturn(mock(Transaction.class));
+        TransactionDTO transfer = transactionService.transfer(transactionDTO);
+        assertNotNull(transfer);
         assertEquals(0.0, origin.getBalance(), 0.0);
     }
 
@@ -110,8 +115,10 @@ public class TransactionServiceTest extends BaseTest {
         when(accountRepository.findByNumberAndBank(transactionDTO.getOriginAccount(),
                                                    transactionDTO.getOriginAccountBank()))
                 .thenReturn(origin);
-        transactionService.transfer(transactionDTO);
+        when(transactionRepository.save(any())).thenReturn(mock(Transaction.class));
+        TransactionDTO transfer = transactionService.transfer(transactionDTO);
 
+        assertNotNull(transfer);
         assertEquals(transactionDTO.getValue(), destination.getBalance());
         assertEquals(0.0, origin.getBalance(), 0.0);
     }
@@ -173,5 +180,44 @@ public class TransactionServiceTest extends BaseTest {
                 .thenReturn(origin);
         when(accountRepository.save(any())).thenReturn(mock(Account.class));
         transactionService.transfer(transactionDTO);
+    }
+
+    @Test
+    public void should_returnTransactionInfo_when_depositExecuted() throws Exception {
+        Account account = new AccountDtoToAccountMapper().map(mockAccountDTO());
+        account.setBalance(0.0);
+        TransactionDTO transactionDTO = mockTransactionDTO();
+        transactionDTO.setType(TransactionType.DEPOSIT);
+        double value = 50.0;
+        transactionDTO.setValue(value);
+        transactionDTO.setDestinationAccountBank(BankProperties.BANK_CODE);
+        when(accountRepository.findByNumberAndBank(any(), any())).thenReturn(account);
+        when(transactionRepository.save(any())).thenReturn(mock(Transaction.class));
+        TransactionDTO transfer = transactionService.deposit(transactionDTO);
+        assertNotNull(transfer);
+        assertEquals(value, account.getBalance(), 0.0);
+    }
+
+    @Test(expected = InvalidParameterException.class)
+    public void should_throwException_when_depositWrongTransactionType() throws Exception {
+        TransactionDTO transactionDTO = mockTransactionDTO();
+        transactionDTO.setType(TransactionType.WITHDRAWAL);
+        transactionService.deposit(transactionDTO);
+    }
+
+    @Test(expected = TransactionException.class)
+    public void should_throwException_when_depositInvalidBankNumber() throws Exception {
+        TransactionDTO transactionDTO = mockTransactionDTO();
+        transactionDTO.setType(TransactionType.DEPOSIT);
+        transactionDTO.setDestinationAccountBank(654);
+        transactionService.deposit(transactionDTO);
+    }
+
+    @Test(expected = EntityNotFoundException.class)
+    public void should_throwException_when_depositAccountNotFound() throws Exception {
+        TransactionDTO transactionDTO = mockTransactionDTO();
+        transactionDTO.setType(TransactionType.DEPOSIT);
+        transactionDTO.setDestinationAccountBank(BankProperties.BANK_CODE);
+        transactionService.deposit(transactionDTO);
     }
 }

@@ -1,6 +1,7 @@
 package com.bank.service;
 
 import com.bank.data.entity.Account;
+import com.bank.data.entity.Transaction;
 import com.bank.data.repository.AccountRepository;
 import com.bank.data.repository.TransactionRepository;
 import com.bank.data.value.BankProperties;
@@ -8,6 +9,7 @@ import com.bank.data.value.TransactionType;
 import com.bank.dto.TransactionDTO;
 import com.bank.exception.TransactionException;
 import com.bank.mapper.TransactionDtoToTransactionMapper;
+import com.bank.mapper.TransactionToTransactionDtoMapper;
 
 import javax.inject.Inject;
 import javax.persistence.EntityNotFoundException;
@@ -65,6 +67,28 @@ public class TransactionServiceImpl implements TransactionService {
         return executeTransfer(origin, destination,transactionDTO);
     }
 
+    @Override
+    public TransactionDTO deposit(@NotNull TransactionDTO transactionDTO) throws TransactionException,
+                                                                                 SQLDataException {
+        if (transactionDTO.getType() != TransactionType.DEPOSIT) {
+            throw new InvalidParameterException("Wrong transaction type.");
+        }
+        Integer destinationBank = transactionDTO.getDestinationAccountBank();
+        if (!BankProperties.BANK_CODE.equals(destinationBank)) {
+            throw new TransactionException("Invalid bank number.");
+        }
+        String destinationAccountNumber = transactionDTO.getDestinationAccount();
+        Account destination = accountRepository.findByNumberAndBank(destinationAccountNumber, destinationBank);
+        if (destination == null) {
+            throw new EntityNotFoundException("Account not found");
+        }
+        destination.setBalance(destination.getBalance() + transactionDTO.getValue());
+        transactionDTO.setDate(Instant.now());
+        Transaction transaction =
+                transactionRepository.save(new TransactionDtoToTransactionMapper().map(transactionDTO));
+        return new TransactionToTransactionDtoMapper().map(transaction);
+    }
+
     private TransactionDTO executeTransfer(
             Account origin,
             Account destination,
@@ -81,7 +105,8 @@ public class TransactionServiceImpl implements TransactionService {
             destination.setBalance(destination.getBalance() + value);
         }
         transactionDTO.setDate(Instant.now());
-        transactionRepository.save(new TransactionDtoToTransactionMapper().map(transactionDTO));
-        return transactionDTO;
+        Transaction transaction =
+                transactionRepository.save(new TransactionDtoToTransactionMapper().map(transactionDTO));
+        return new TransactionToTransactionDtoMapper().map(transaction);
     }
 }
