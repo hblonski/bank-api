@@ -1,0 +1,161 @@
+{
+	"info": {
+		"_postman_id": "ad73fb29-08d7-44e2-862b-8477b6705fec",
+		"name": "bank-api-collection",
+		"description": "Bank api sample requests.",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "http://localhost:8080/client/create",
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"name\" : \"John\",\n\t\"documentNumber\" : \"doc2\",\n\t\"address\" : \"Example Street 123\",\n\t\"city\" : \"Belo Horizonte\",\n\t\"state\": \"Minas Gerais\",\n\t\"country\" : \"Brazil\",\n\t\"profession\" : \"Software Engineer\",\n\t\"phone\" : \"123456789\"\n}"
+				},
+				"url": {
+					"raw": "http://localhost:8080/client/create",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"client",
+						"create"
+					]
+				},
+				"description": "Create client"
+			},
+			"response": []
+		},
+		{
+			"name": "http://localhost:8080/account/create?clientId=1",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"url": {
+					"raw": "http://localhost:8080/account/create?clientId=1",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"account",
+						"create"
+					],
+					"query": [
+						{
+							"key": "clientId",
+							"value": "1"
+						}
+					]
+				},
+				"description": "Create account"
+			},
+			"response": []
+		},
+		{
+			"name": "http://localhost:8080/transactions/deposit",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"value\" : 5000.0,\n\t\"destinationAccount\" : \"1\",\n\t\"description\" : \"Monthly paycheck\" \n}"
+				},
+				"url": {
+					"raw": "http://localhost:8080/transactions/deposit",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"transactions",
+						"deposit"
+					]
+				},
+				"description": "Deposit money"
+			},
+			"response": []
+		},
+		{
+			"name": "http://localhost:8080/transactions/transfer",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"value\" : 500.0,\n\t\"originAccount\" : \"1\",\n\t\"originAccountBank\" : 23,\n\t\"destinationAccount\" : \"2\",\n\t\"destinationAccountBank\" : 45\n}"
+				},
+				"url": {
+					"raw": "http://localhost:8080/transactions/transfer",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"transactions",
+						"transfer"
+					]
+				},
+				"description": "Transfer money"
+			},
+			"response": []
+		},
+		{
+			"name": "http://localhost:8080/account/1",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/account/1",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"account",
+						"1"
+					]
+				},
+				"description": "Get account info"
+			},
+			"response": []
+		}
+	]
+}
