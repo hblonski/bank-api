@@ -19,6 +19,7 @@ import javax.persistence.EntityExistsException;
 import javax.persistence.EntityNotFoundException;
 import javax.validation.ConstraintViolationException;
 import javax.ws.rs.core.Application;
+import java.math.BigInteger;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -58,35 +59,33 @@ public class AccountServiceTest extends BaseTest {
         AccountDTO accountDTO = mockAccountDTO();
         when(clientRepository.findById(any())).thenReturn(mock(Client.class));
         when(accountRepository.save(any())).thenReturn(new AccountDtoToAccountMapper().map(accountDTO));
-        AccountDTO saved = accountService.save(clientId, accountDTO);
+        when(accountRepository.getNextId()).thenReturn(mock(BigInteger.class));
+        AccountDTO saved = accountService.create(clientId);
         assertNotNull(saved);
         assertEquals(0.0, saved.getBalance(), 0.0);
     }
 
     @Test(expected = EntityNotFoundException.class)
     public void should_throwException_when_clientNotFound() {
-        Long clientId = 1L;
-        AccountDTO accountDTO = mockAccountDTO();
-        accountService.save(clientId, accountDTO);
+        accountService.create(1L);
     }
 
     @Test(expected = EntityExistsException.class)
     public void should_throwException_when_clientAlreadyHasAccount() {
         Long clientId = 1L;
-        AccountDTO accountDTO = mockAccountDTO();
         Client client = mock(Client.class);
         when(clientRepository.findById(any())).thenReturn(client);
         when(client.getAccount()).thenReturn(mock(Account.class));
-        accountService.save(clientId, accountDTO);
+        accountService.create(clientId);
     }
 
     @Test(expected = ConstraintViolationException.class)
     public void should_throwException_when_constraintsViolated() {
         Long clientId = 1L;
-        AccountDTO accountDTO = mockAccountDTO();
         when(clientRepository.findById(any())).thenReturn(mock(Client.class));
         ConstraintViolationException exception = mockViolationException("violation");
+        when(accountRepository.getNextId()).thenReturn(mock(BigInteger.class));
         when(accountRepository.save(any())).thenThrow(exception);
-        accountService.save(clientId, accountDTO);
+        accountService.create(clientId);
     }
 }

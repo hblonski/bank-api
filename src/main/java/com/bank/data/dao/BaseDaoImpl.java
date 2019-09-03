@@ -9,7 +9,8 @@ import javax.persistence.criteria.Path;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 import java.io.Serializable;
-import java.util.Collections;
+import java.math.BigInteger;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -31,16 +32,24 @@ public class BaseDaoImpl implements BaseDao {
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public <T> List<T> find(Class<T> clazz, Map<String, Object> fieldValues) {
         CriteriaBuilder builder = databaseSession.getCriteriaBuilder();
         CriteriaQuery query = builder.createQuery(clazz);
         Root root = query.from(clazz);
-        List<Predicate> predicates = Collections.emptyList();
+        List<Predicate> predicates = new ArrayList<>();
         fieldValues.forEach((fieldName, fieldValue) -> {
             Path path = root.get(fieldName);
-            builder.equal(path, fieldValue);
+            predicates.add(builder.equal(path, fieldValue));
         });
         Predicate[] predicatesArray = predicates.toArray(new Predicate[0]);
         return databaseSession.createQuery(query.select(root).where(builder.and(predicatesArray))).getResultList();
+    }
+
+    @Override
+    public BigInteger getNextSequenceValue(String sequenceName) {
+        String query = "SELECT " + sequenceName + ".nextval FROM DUAL";
+        Object nextValue = databaseSession.createNativeQuery(query).getSingleResult();
+        return nextValue != null ? (BigInteger) nextValue : null;
     }
 }

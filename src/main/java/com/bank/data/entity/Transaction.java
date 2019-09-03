@@ -10,7 +10,6 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.validation.constraints.Min;
-import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import java.time.Instant;
 
@@ -27,8 +26,8 @@ public class Transaction {
             TransactionType type,
             @NotNull(message = "Date must not be null!") Instant date,
             @NotNull(message = "Value must not be null!") Double value,
-            @NotEmpty(message = "Account must not be empty!") String originAccount,
-            @NotNull(message = "Bank must not be null!") Integer originAccountBank,
+            String originAccount,
+            Integer originAccountBank,
             String destinationAccount,
             Integer destinationAccountBank,
             String description
@@ -61,12 +60,10 @@ public class Transaction {
     @Min(value = 0L, message = "The value must be positive")
     private Double value;
 
-    @Column(nullable = false)
-    @NotEmpty(message = "Account must not be empty!")
+    @Column
     private String originAccount;
 
-    @Column(nullable = false)
-    @NotNull(message = "Bank must not be null!")
+    @Column
     private Integer originAccountBank;
 
     @Column

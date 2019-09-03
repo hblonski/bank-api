@@ -41,6 +41,7 @@ public class BaseDaoTest extends BaseTest {
     @Test
     public void should_findByFields_when_objectsSaved() {
         Account account = new AccountDtoToAccountMapper().map(mockAccountDTO());
+        account.setNumber("987-7");
         baseDao.save(account);
         Map<String, Object> fieldValues = new HashMap<>();
         fieldValues.put("number", account.getNumber());
@@ -48,5 +49,13 @@ public class BaseDaoTest extends BaseTest {
         List<Account> accounts = baseDao.find(Account.class, fieldValues);
         assertNotNull(accounts);
         assertEquals(1, accounts.size());
+    }
+
+    @Test
+    public void should_findNextSequenceValue() {
+        Account account = new AccountDtoToAccountMapper().map(mockAccountDTO());
+        baseDao.save(account);
+        Long next = account.getId() + 1;
+        assertEquals(next.toString(), baseDao.getNextSequenceValue(Account.ACCOUNT_ID_SEQUENCE).toString());
     }
 }

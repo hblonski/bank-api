@@ -7,6 +7,7 @@ import com.bank.mapper.ClientDtoToClientMapper;
 import com.bank.mapper.ClientToClientDtoMapper;
 
 import javax.inject.Inject;
+import javax.persistence.EntityExistsException;
 import javax.validation.constraints.NotNull;
 
 public class ClientServiceImpl implements ClientService {
@@ -15,7 +16,11 @@ public class ClientServiceImpl implements ClientService {
     private ClientRepository clientRepository;
 
     @Override
-    public ClientDTO save(@NotNull ClientDTO clientDTO) {
+    public ClientDTO save(@NotNull ClientDTO clientDTO) throws EntityExistsException {
+        Client existent = clientRepository.findByDocumentNumber(clientDTO.getDocumentNumber());
+        if (existent != null) {
+            throw new EntityExistsException("Client with document number already exists.");
+        }
         Client client = new ClientDtoToClientMapper().map(clientDTO);
         return new ClientToClientDtoMapper().map(clientRepository.save(client));
     }

@@ -52,14 +52,15 @@ public class TransactionServiceImpl implements TransactionService {
 
         if (origin == null) {
             if (!BankProperties.BANK_CODE.equals(originBank)) {
-                origin = accountRepository.save(new Account(null, destinationAccountNumber, null, destinationBank));
+                origin = accountRepository.save(new Account(null, originAccountNumber, null, originBank));
             } else {
                 throw new TransactionException("Invalid origin account.");
             }
         }
         if (destination == null) {
             if (!BankProperties.BANK_CODE.equals(destinationBank)) {
-                destination = accountRepository.save(new Account(null, originAccountNumber, null, originBank));
+                Account account = new Account(null, destinationAccountNumber, null, destinationBank);
+                destination = accountRepository.save(account);
             } else {
                 throw new TransactionException("Invalid destination account.");
             }

@@ -4,7 +4,6 @@ import com.bank.data.value.TransactionType;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import javax.validation.constraints.Min;
-import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import javax.xml.bind.annotation.XmlRootElement;
 import java.time.Instant;
@@ -20,9 +19,10 @@ public class TransactionDTO {
             Long id,
             TransactionType type,
             @NotNull(message = "Date must not be null!") Instant date,
-            @NotNull(message = "Value must not be null!") @Min(value = 0L, message = "The value must be positive") Double value,
-            @NotEmpty(message = "Account must not be empty!") String originAccount,
-            @NotNull(message = "Bank must not be null!") Integer originAccountBank,
+            @NotNull(message = "Value must not be null!")
+            @Min(value = 0L, message = "The value must be positive") Double value,
+            String originAccount,
+            Integer originAccountBank,
             String destinationAccount,
             Integer destinationAccountBank,
             String description
@@ -43,17 +43,14 @@ public class TransactionDTO {
     @JsonIgnore
     private TransactionType type;
 
-    @NotNull(message = "Date must not be null!")
     private Instant date;
 
     @NotNull(message = "Value must not be null!")
     @Min(value = 0L, message = "The value must be positive")
     private Double value;
 
-    @NotEmpty(message = "Account must not be empty!")
     private String originAccount;
 
-    @NotNull(message = "Bank must not be null!")
     private Integer originAccountBank;
 
     private String destinationAccount;
@@ -82,7 +79,6 @@ public class TransactionDTO {
         return date;
     }
 
-    @JsonIgnore
     public void setDate(Instant date) {
         this.date = date;
     }

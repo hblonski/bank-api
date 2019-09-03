@@ -14,6 +14,7 @@ import org.mockito.junit.MockitoJUnitRunner;
 
 import javax.validation.ConstraintViolationException;
 import javax.ws.rs.core.Application;
+import java.math.BigInteger;
 import java.sql.SQLDataException;
 import java.util.Collections;
 import java.util.List;
@@ -87,5 +88,11 @@ public class AccountRepositoryTest extends BaseTest {
         List<Account> accounts = List.of(account, account2);
         when(baseDao.find(any(Class.class), any())).thenReturn(accounts);
         accountRepository.findByNumberAndBank("123",123);
+    }
+
+    @Test
+    public void should_getNextAccountId() {
+        when(baseDao.getNextSequenceValue(any())).thenReturn(mock(BigInteger.class));
+        assertNotNull(baseDao.getNextSequenceValue("test"));
     }
 }

@@ -7,8 +7,5 @@ import javax.persistence.EntityNotFoundException;
 import javax.validation.constraints.NotNull;
 
 public interface AccountService {
-    AccountDTO save(
-            @NotNull Long clientId,
-            @NotNull AccountDTO accountDTO
-    ) throws EntityNotFoundException, EntityExistsException;
+    AccountDTO create(@NotNull Long clientId) throws EntityNotFoundException, EntityExistsException;
 }

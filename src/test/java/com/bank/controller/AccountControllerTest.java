@@ -14,7 +14,6 @@ import org.mockito.junit.MockitoJUnitRunner;
 
 import javax.persistence.EntityExistsException;
 import javax.persistence.EntityNotFoundException;
-import javax.validation.ConstraintViolationException;
 import javax.ws.rs.core.Application;
 import javax.ws.rs.core.Response;
 import java.io.IOException;
@@ -52,8 +51,8 @@ public class AccountControllerTest extends BaseTest {
         AccountDTO saved = mockAccountDTO();
         saved.setId(clientId);
         String idParam = "?clientId=" + clientId;
-        when(accountService.save(any(), any())).thenReturn(saved);
-        HttpResponse response = postHttpRequest(CONTROLLER_PATH + "/create" + idParam, new Gson().toJson(saved));
+        when(accountService.create(any())).thenReturn(saved);
+        HttpResponse response = postHttpRequest(SAVE_ACC_PATH + idParam, new Gson().toJson(saved));
         assertEquals(Response.Status.CREATED.getStatusCode(), response.statusCode());
         assertEquals(saved.getId(), new Gson().fromJson(response.body().toString(), AccountDTO.class).getId());
     }
@@ -63,8 +62,8 @@ public class AccountControllerTest extends BaseTest {
         String errorMessage = "not found";
         Long clientId = 1L;
         String idParam = "?clientId=" + clientId;
-        when(accountService.save(any(), any())).thenThrow(new EntityNotFoundException(errorMessage));
-        postRequestAndVerifyError(errorMessage, Response.Status.NOT_FOUND, SAVE_ACC_PATH + idParam, mockAccountDTO());
+        when(accountService.create(any())).thenThrow(new EntityNotFoundException(errorMessage));
+        sendPostRequestAndVerifyError(errorMessage, Response.Status.NOT_FOUND, SAVE_ACC_PATH + idParam, mockAccountDTO());
     }
 
     @Test
@@ -72,17 +71,7 @@ public class AccountControllerTest extends BaseTest {
         String errorMessage = "already has account";
         Long clientId = 1L;
         String idParam = "?clientId=" + clientId;
-        when(accountService.save(any(), any())).thenThrow(new EntityExistsException(errorMessage));
-        postRequestAndVerifyError(errorMessage, Response.Status.BAD_REQUEST, SAVE_ACC_PATH + idParam, mockAccountDTO());
-    }
-
-    @Test
-    public void should_returnErrorMessage_when_constraintViolations() throws Exception {
-        String errorMessage = "violations";
-        Long clientId = 1L;
-        String idParam = "?clientId=" + clientId;
-        ConstraintViolationException exception = mockViolationException(errorMessage);
-        when(accountService.save(any(), any())).thenThrow(exception);
-        postRequestAndVerifyError(errorMessage, Response.Status.BAD_REQUEST, SAVE_ACC_PATH + idParam, mockAccountDTO());
+        when(accountService.create(any())).thenThrow(new EntityExistsException(errorMessage));
+        sendPostRequestAndVerifyError(errorMessage, Response.Status.BAD_REQUEST, SAVE_ACC_PATH + idParam, mockAccountDTO());
     }
 }

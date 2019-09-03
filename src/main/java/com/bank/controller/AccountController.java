@@ -7,8 +7,6 @@ import com.bank.util.ResponseUtil;
 import javax.inject.Inject;
 import javax.persistence.EntityExistsException;
 import javax.persistence.EntityNotFoundException;
-import javax.validation.ConstraintViolationException;
-import javax.ws.rs.Consumes;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
@@ -24,14 +22,11 @@ public class AccountController {
 
     @POST
     @Path("/create")
-    @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public Response save(@QueryParam("clientId") Long clientId, AccountDTO accountDTO) {
+    public Response create(@QueryParam("clientId") Long clientId) {
         try {
-            AccountDTO saved = accountService.save(clientId, accountDTO);
+            AccountDTO saved = accountService.create(clientId);
             return ResponseUtil.handleGenericPostSuccess(saved, Response.Status.CREATED);
-        } catch (ConstraintViolationException e) {
-            return ResponseUtil.handleConstraintViolationException(e);
         } catch (EntityNotFoundException e) {
             return ResponseUtil.handleGenericException(e, Response.Status.NOT_FOUND);
         } catch (EntityExistsException e) {

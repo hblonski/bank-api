@@ -5,7 +5,9 @@ import com.bank.data.value.BankProperties;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.NotEmpty;
@@ -14,6 +16,8 @@ import javax.validation.constraints.NotNull;
 @Entity
 @Table(name = "ACCOUNT", uniqueConstraints = @UniqueConstraint(columnNames = "number"))
 public class Account {
+
+    public static final String ACCOUNT_ID_SEQUENCE = "ACCOUNT_SEQ";
 
     public Account() {
         zeroBalance();
@@ -32,14 +36,14 @@ public class Account {
     }
 
     @Id
-    @GeneratedValue
+    @GeneratedValue(generator = ACCOUNT_ID_SEQUENCE, strategy = GenerationType.SEQUENCE)
+    @SequenceGenerator(name = ACCOUNT_ID_SEQUENCE, sequenceName = ACCOUNT_ID_SEQUENCE, allocationSize = 1)
     private Long id;
 
     @Column(nullable = false)
     @NotEmpty(message = "Number cannot be empty!")
     private String number;
 
-    @Column(nullable = false)
     private Double balance;
 
     @Column(nullable = false)

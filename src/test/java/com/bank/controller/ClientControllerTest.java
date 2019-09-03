@@ -12,6 +12,7 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.mockito.junit.MockitoJUnitRunner;
 
+import javax.persistence.EntityExistsException;
 import javax.validation.ConstraintViolationException;
 import javax.ws.rs.core.Application;
 import javax.ws.rs.core.Response;
@@ -58,6 +59,13 @@ public class ClientControllerTest extends BaseTest {
         String violationMessage = "violation";
         ConstraintViolationException exception = mockViolationException(violationMessage);
         when(clientService.save(any())).thenThrow(exception);
-        postRequestAndVerifyError(violationMessage, Response.Status.BAD_REQUEST, CREATE_PATH, mockClientDTO());
+        sendPostRequestAndVerifyError(violationMessage, Response.Status.BAD_REQUEST, CREATE_PATH, mockClientDTO());
+    }
+
+    @Test
+    public void should_returnErrorMessage_when_clientAlreadyExists() throws Exception {
+        String errorMessage = "client already exists";
+        when(clientService.save(any())).thenThrow(new EntityExistsException(errorMessage));
+        sendPostRequestAndVerifyError(errorMessage, Response.Status.BAD_REQUEST, CREATE_PATH, mockClientDTO());
     }
 }

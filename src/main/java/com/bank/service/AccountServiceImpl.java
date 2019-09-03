@@ -6,7 +6,6 @@ import com.bank.data.repository.AccountRepository;
 import com.bank.data.repository.ClientRepository;
 import com.bank.data.value.BankProperties;
 import com.bank.dto.AccountDTO;
-import com.bank.mapper.AccountDtoToAccountMapper;
 import com.bank.mapper.AccountToAccountDtoMapper;
 
 import javax.inject.Inject;
@@ -23,13 +22,7 @@ public class AccountServiceImpl implements AccountService {
     private ClientRepository clientRepository;
 
     @Override
-    public AccountDTO save(
-            @NotNull Long clientId,
-            @NotNull AccountDTO accountDTO
-    ) throws EntityNotFoundException, EntityExistsException {
-        accountDTO.setBank(BankProperties.BANK_CODE);
-        Account account = new AccountDtoToAccountMapper().map(accountDTO);
-        account.zeroBalance();
+    public AccountDTO create(@NotNull Long clientId) throws EntityNotFoundException, EntityExistsException {
         Client client = clientRepository.findById(clientId);
         if (client == null) {
             throw new EntityNotFoundException("Client not found");
@@ -37,6 +30,10 @@ public class AccountServiceImpl implements AccountService {
         if (client.getAccount() != null) {
             throw new EntityExistsException("Client already has an account");
         }
+        Account account = new Account();
+        account.zeroBalance();
+        account.setBank(BankProperties.BANK_CODE);
+        account.setNumber(accountRepository.getNextId().toString());
         Account saved = accountRepository.save(account);
         client.setAccount(saved);
         clientRepository.save(client);

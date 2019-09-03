@@ -36,7 +36,27 @@ public class BaseTest extends JerseyTest {
         return httpClient.send(request, HttpResponse.BodyHandlers.ofString());
     }
 
-    protected void postRequestAndVerifyError(
+    protected HttpResponse getHttpRequest(String path) throws IOException, InterruptedException {
+        HttpClient httpClient = HttpClient.newBuilder().build();
+        HttpRequest request = HttpRequest.newBuilder()
+                .uri(UriBuilder.fromUri(BASE_URI + path).build())
+                .header("Content-Type", "application/json")
+                .GET()
+                .build();
+        return httpClient.send(request, HttpResponse.BodyHandlers.ofString());
+    }
+
+    protected void sendGetRequestAndVerifyError(
+            String errorMessage,
+            Response.Status status,
+            String path
+    ) throws IOException, InterruptedException {
+        HttpResponse response = getHttpRequest(path);
+        assertEquals(status.getStatusCode(), response.statusCode());
+        assertEquals(errorMessage, response.body());
+    }
+
+    protected void sendPostRequestAndVerifyError(
             String errorMessage,
             Response.Status status,
             String path,

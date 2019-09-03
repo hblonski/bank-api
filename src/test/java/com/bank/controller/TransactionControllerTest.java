@@ -71,14 +71,14 @@ public class TransactionControllerTest extends BaseTest {
     public void should_returnErrorMessage_when_transferTransactionException() throws Exception {
         String errorMessage = "transaction error";
         when(transactionService.transfer(any())).thenThrow(new TransactionException(errorMessage));
-        postRequestAndVerifyError(errorMessage, Response.Status.BAD_REQUEST, TRANSFER_PATH, mockTransactionDTO());
+        sendPostRequestAndVerifyError(errorMessage, Response.Status.BAD_REQUEST, TRANSFER_PATH, mockTransactionDTO());
     }
 
     @Test
     public void should_returnErrorMessage_when_transferAccountsNotFound() throws Exception {
         String errorMessage = "accounts not found error";
         when(transactionService.transfer(any())).thenThrow(new EntityNotFoundException(errorMessage));
-        postRequestAndVerifyError(errorMessage, Response.Status.NOT_FOUND, TRANSFER_PATH, mockTransactionDTO());
+        sendPostRequestAndVerifyError(errorMessage, Response.Status.NOT_FOUND, TRANSFER_PATH, mockTransactionDTO());
     }
 
     @Test
@@ -86,7 +86,7 @@ public class TransactionControllerTest extends BaseTest {
         String errorMessage = "validation";
         ConstraintViolationException e = mockViolationException(errorMessage);
         when(transactionService.transfer(any())).thenThrow(e);
-        postRequestAndVerifyError(errorMessage, Response.Status.BAD_REQUEST, TRANSFER_PATH, mockTransactionDTO());
+        sendPostRequestAndVerifyError(errorMessage, Response.Status.BAD_REQUEST, TRANSFER_PATH, mockTransactionDTO());
     }
 
     @Test
@@ -105,7 +105,7 @@ public class TransactionControllerTest extends BaseTest {
         String errorMessage = "validation";
         ConstraintViolationException e = mockViolationException(errorMessage);
         when(transactionService.deposit(any())).thenThrow(e);
-        postRequestAndVerifyError(errorMessage, Response.Status.BAD_REQUEST, DEPOSIT_PATH, mockTransactionDTO());
+        sendPostRequestAndVerifyError(errorMessage, Response.Status.BAD_REQUEST, DEPOSIT_PATH, mockTransactionDTO());
     }
 
     @Test
@@ -120,6 +120,6 @@ public class TransactionControllerTest extends BaseTest {
     public void should_returnErrorMessage_when_depositTransactionException() throws Exception {
         String errorMessage = "transaction error";
         when(transactionService.deposit(any())).thenThrow(new TransactionException(errorMessage));
-        postRequestAndVerifyError(errorMessage, Response.Status.BAD_REQUEST, DEPOSIT_PATH, mockTransactionDTO());
+        sendPostRequestAndVerifyError(errorMessage, Response.Status.BAD_REQUEST, DEPOSIT_PATH, mockTransactionDTO());
     }
 }

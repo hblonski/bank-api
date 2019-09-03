@@ -5,6 +5,7 @@ import com.bank.service.ClientService;
 import com.bank.util.ResponseUtil;
 
 import javax.inject.Inject;
+import javax.persistence.EntityExistsException;
 import javax.validation.ConstraintViolationException;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.POST;
@@ -29,6 +30,8 @@ public class ClientController {
             return ResponseUtil.handleGenericPostSuccess(saved, Response.Status.CREATED);
         } catch (ConstraintViolationException e) {
             return ResponseUtil.handleConstraintViolationException(e);
+        } catch (EntityExistsException e) {
+            return ResponseUtil.handleGenericException(e, Response.Status.BAD_REQUEST);
         }
     }
 }

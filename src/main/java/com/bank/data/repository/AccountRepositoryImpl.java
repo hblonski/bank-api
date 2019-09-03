@@ -6,6 +6,7 @@ import com.bank.data.entity.Account;
 import javax.inject.Inject;
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
+import java.math.BigInteger;
 import java.sql.SQLDataException;
 import java.util.HashMap;
 import java.util.List;
@@ -38,5 +39,10 @@ public class AccountRepositoryImpl implements AccountRepository {
             throw new SQLDataException("Duplicate accounts found.");
         }
         return accounts.get(0);
+    }
+
+    @Override
+    public BigInteger getNextId() {
+        return baseDao.getNextSequenceValue(Account.ACCOUNT_ID_SEQUENCE);
     }
 }

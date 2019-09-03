@@ -15,8 +15,13 @@ import org.mockito.junit.MockitoJUnitRunner;
 import javax.validation.ConstraintViolationException;
 import javax.ws.rs.core.Application;
 
+import java.util.List;
+
+import static junit.framework.TestCase.assertNull;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -58,5 +63,19 @@ public class ClientRepositoryTest extends BaseTest {
         ConstraintViolationException exception = mockViolationException(message);
         when(baseDao.save(any())).thenThrow(exception);
         clientRepository.save(client);
+    }
+
+    @Test
+    public void should_findByDocumentNumber_when_clientExists() {
+        List<Client> clients = List.of(mock(Client.class));
+        when(baseDao.find(any(Class.class), any())).thenReturn(clients);
+        Client result = clientRepository.findByDocumentNumber("any");
+        assertNotNull(result);
+    }
+
+    @Test
+    public void should_returnNull_when_clientDoesNotExist() {
+        Client result = clientRepository.findByDocumentNumber("any");
+        assertNull(result);
     }
 }
