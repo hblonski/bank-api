@@ -18,11 +18,9 @@ import javax.validation.ConstraintViolationException;
 import javax.ws.rs.core.Application;
 import javax.ws.rs.core.Response;
 import java.net.http.HttpResponse;
-import java.sql.SQLDataException;
 
 import static org.junit.Assert.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -57,14 +55,6 @@ public class TransactionControllerTest extends BaseTest {
         assertEquals(Response.Status.OK.getStatusCode(), response.statusCode());
         assertEquals(transactionDTO.getId(),
                      new Gson().fromJson(response.body().toString(), TransactionDTO.class).getId());
-    }
-
-    @Test
-    public void should_returnErrorMessage_when_transferDatabaseError() throws Exception {
-        when(transactionService.transfer(any())).thenThrow(mock(SQLDataException.class));
-        HttpResponse response =
-                postHttpRequest(TRANSFER_PATH, new Gson().toJson(mockTransactionDTO()));
-        assertEquals(Response.Status.INTERNAL_SERVER_ERROR.getStatusCode(), response.statusCode());
     }
 
     @Test
@@ -106,14 +96,6 @@ public class TransactionControllerTest extends BaseTest {
         ConstraintViolationException e = mockViolationException(errorMessage);
         when(transactionService.deposit(any())).thenThrow(e);
         sendPostRequestAndVerifyError(errorMessage, Response.Status.BAD_REQUEST, DEPOSIT_PATH, mockTransactionDTO());
-    }
-
-    @Test
-    public void should_returnErrorMessage_when_depositDatabaseError() throws Exception {
-        when(transactionService.deposit(any())).thenThrow(mock(SQLDataException.class));
-        HttpResponse response =
-                postHttpRequest(DEPOSIT_PATH, new Gson().toJson(mockTransactionDTO()));
-        assertEquals(Response.Status.INTERNAL_SERVER_ERROR.getStatusCode(), response.statusCode());
     }
 
     @Test

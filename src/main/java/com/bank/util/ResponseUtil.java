@@ -9,9 +9,9 @@ public final class ResponseUtil {
         // Empty
     }
 
-    public static Response handleGenericPostSuccess(Object response, Response.Status status) {
+    public static Response handleGenericResponse(Object body, Response.Status status) {
         return Response.status(status)
-                .entity(response)
+                .entity(body)
                 .build();
     }
 
@@ -24,12 +24,6 @@ public final class ResponseUtil {
     public static Response handleGenericException(Exception e, Response.Status status) {
         return Response.status(status)
                 .entity(e.getMessage())
-                .build();
-    }
-
-    public static Response handleInternalServerError() {
-        return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
-                .entity("Something went wrong... We're sorry! :(")
                 .build();
     }
 }

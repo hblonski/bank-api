@@ -15,7 +15,6 @@ import org.mockito.junit.MockitoJUnitRunner;
 import javax.validation.ConstraintViolationException;
 import javax.ws.rs.core.Application;
 import java.math.BigInteger;
-import java.sql.SQLDataException;
 import java.util.Collections;
 import java.util.List;
 
@@ -66,7 +65,7 @@ public class AccountRepositoryTest extends BaseTest {
     }
 
     @Test
-    public void should_returnAccount_when_accountsFound() throws SQLDataException {
+    public void should_returnAccount_when_accountsFound() {
         Account account = new AccountDtoToAccountMapper().map(mockAccountDTO());
         List<Account> accounts = List.of(account);
         when(baseDao.find(any(Class.class), any())).thenReturn(accounts);
@@ -75,19 +74,10 @@ public class AccountRepositoryTest extends BaseTest {
     }
 
     @Test
-    public void should_returnNull_when_noAccountsFound() throws SQLDataException {
+    public void should_returnNull_when_noAccountsFound() {
         assertNull(accountRepository.findByNumberAndBank("123",123));
         when(baseDao.find(any(Class.class), any())).thenReturn(Collections.emptyList());
         assertNull(accountRepository.findByNumberAndBank("123",123));
-    }
-
-    @Test(expected = SQLDataException.class)
-    public void should_throwException_when_duplicateAccountsFound() throws SQLDataException {
-        Account account = new AccountDtoToAccountMapper().map(mockAccountDTO());
-        Account account2 = new AccountDtoToAccountMapper().map(mockAccountDTO());
-        List<Account> accounts = List.of(account, account2);
-        when(baseDao.find(any(Class.class), any())).thenReturn(accounts);
-        accountRepository.findByNumberAndBank("123",123);
     }
 
     @Test

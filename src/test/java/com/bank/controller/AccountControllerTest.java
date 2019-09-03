@@ -52,7 +52,7 @@ public class AccountControllerTest extends BaseTest {
         saved.setId(clientId);
         String idParam = "?clientId=" + clientId;
         when(accountService.create(any())).thenReturn(saved);
-        HttpResponse response = postHttpRequest(SAVE_ACC_PATH + idParam, new Gson().toJson(saved));
+        HttpResponse response = postHttpRequest(SAVE_ACC_PATH + idParam);
         assertEquals(Response.Status.CREATED.getStatusCode(), response.statusCode());
         assertEquals(saved.getId(), new Gson().fromJson(response.body().toString(), AccountDTO.class).getId());
     }
@@ -60,18 +60,33 @@ public class AccountControllerTest extends BaseTest {
     @Test
     public void should_returnErrorMessage_when_clientNotFound() throws Exception {
         String errorMessage = "not found";
-        Long clientId = 1L;
+        long clientId = 1L;
         String idParam = "?clientId=" + clientId;
         when(accountService.create(any())).thenThrow(new EntityNotFoundException(errorMessage));
-        sendPostRequestAndVerifyError(errorMessage, Response.Status.NOT_FOUND, SAVE_ACC_PATH + idParam, mockAccountDTO());
+        sendPostRequestAndVerifyError(errorMessage, Response.Status.NOT_FOUND, SAVE_ACC_PATH + idParam);
     }
 
     @Test
     public void should_returnErrorMessage_when_clientAlreadyHasAccount() throws Exception {
         String errorMessage = "already has account";
-        Long clientId = 1L;
+        long clientId = 1L;
         String idParam = "?clientId=" + clientId;
         when(accountService.create(any())).thenThrow(new EntityExistsException(errorMessage));
-        sendPostRequestAndVerifyError(errorMessage, Response.Status.BAD_REQUEST, SAVE_ACC_PATH + idParam, mockAccountDTO());
+        sendPostRequestAndVerifyError(errorMessage, Response.Status.BAD_REQUEST, SAVE_ACC_PATH + idParam);
+    }
+
+    @Test
+    public void should_returnAccountData_when_accountExists() throws Exception {
+        AccountDTO accountDTO = mockAccountDTO();
+        when(accountService.get(any())).thenReturn(accountDTO);
+        HttpResponse response = getHttpRequest(CONTROLLER_PATH + "/0");
+        assertEquals(Response.Status.OK.getStatusCode(), response.statusCode());
+        assertEquals(accountDTO.getId(), new Gson().fromJson(response.body().toString(), AccountDTO.class).getId());
+    }
+
+    @Test
+    public void should_returnNotFound_when_accountNotFound() throws Exception {
+        HttpResponse response = getHttpRequest(CONTROLLER_PATH + "/0");
+        assertEquals(Response.Status.NOT_FOUND.getStatusCode(), response.statusCode());
     }
 }

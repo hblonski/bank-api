@@ -39,4 +39,13 @@ public class AccountServiceImpl implements AccountService {
         clientRepository.save(client);
         return new AccountToAccountDtoMapper().map(saved);
     }
+
+    @Override
+    public AccountDTO get(@NotNull String number) {
+        Account account = accountRepository.findByNumberAndBank(number, BankProperties.BANK_CODE);
+        if (account != null) {
+            return new AccountToAccountDtoMapper().map(account);
+        }
+        return null;
+    }
 }

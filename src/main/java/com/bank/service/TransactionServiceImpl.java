@@ -15,7 +15,6 @@ import javax.inject.Inject;
 import javax.persistence.EntityNotFoundException;
 import javax.validation.constraints.NotNull;
 import java.security.InvalidParameterException;
-import java.sql.SQLDataException;
 import java.time.Instant;
 
 public class TransactionServiceImpl implements TransactionService {
@@ -27,9 +26,7 @@ public class TransactionServiceImpl implements TransactionService {
     private AccountRepository accountRepository;
 
     @Override
-    public TransactionDTO transfer(@NotNull TransactionDTO transactionDTO) throws
-                                                                           SQLDataException,
-                                                                           TransactionException,
+    public TransactionDTO transfer(@NotNull TransactionDTO transactionDTO) throws TransactionException,
                                                                            EntityNotFoundException {
         if (transactionDTO.getType() != TransactionType.TRANSFER) {
             throw new InvalidParameterException("Wrong transaction type.");
@@ -69,8 +66,7 @@ public class TransactionServiceImpl implements TransactionService {
     }
 
     @Override
-    public TransactionDTO deposit(@NotNull TransactionDTO transactionDTO) throws TransactionException,
-                                                                                 SQLDataException {
+    public TransactionDTO deposit(@NotNull TransactionDTO transactionDTO) throws TransactionException {
         if (transactionDTO.getType() != TransactionType.DEPOSIT) {
             throw new InvalidParameterException("Wrong transaction type.");
         }

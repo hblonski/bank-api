@@ -21,6 +21,7 @@ import javax.validation.ConstraintViolationException;
 import javax.ws.rs.core.Application;
 import java.math.BigInteger;
 
+import static junit.framework.TestCase.assertNull;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.mockito.ArgumentMatchers.any;
@@ -87,5 +88,18 @@ public class AccountServiceTest extends BaseTest {
         when(accountRepository.getNextId()).thenReturn(mock(BigInteger.class));
         when(accountRepository.save(any())).thenThrow(exception);
         accountService.create(clientId);
+    }
+
+    @Test
+    public void should_returnAccountData_when_accountFound() {
+        Account account = new AccountDtoToAccountMapper().map(mockAccountDTO());
+        when(accountRepository.findByNumberAndBank(any(), any())).thenReturn(account);
+        AccountDTO accountDTO = accountService.get("123");
+        assertNotNull(accountDTO);
+    }
+
+    @Test
+    public void should_returnNull_when_accountNotFound() {
+        assertNull(accountService.get("123"));
     }
 }

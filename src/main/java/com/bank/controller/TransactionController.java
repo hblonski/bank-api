@@ -1,5 +1,6 @@
 package com.bank.controller;
 
+import com.bank.data.value.BankProperties;
 import com.bank.data.value.TransactionType;
 import com.bank.dto.TransactionDTO;
 import com.bank.exception.TransactionException;
@@ -15,7 +16,6 @@ import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import java.sql.SQLDataException;
 
 @Path("/transactions")
 public class TransactionController {
@@ -31,9 +31,7 @@ public class TransactionController {
         transactionDTO.setType(TransactionType.TRANSFER);
         try {
             TransactionDTO transfer = transactionService.transfer(transactionDTO);
-            return ResponseUtil.handleGenericPostSuccess(transfer, Response.Status.OK);
-        } catch (SQLDataException e) {
-            return ResponseUtil.handleInternalServerError();
+            return ResponseUtil.handleGenericResponse(transfer, Response.Status.OK);
         } catch (TransactionException e) {
             return ResponseUtil.handleGenericException(e, Response.Status.BAD_REQUEST);
         } catch (ConstraintViolationException e) {
@@ -50,13 +48,12 @@ public class TransactionController {
     public Response deposit(TransactionDTO transactionDTO) {
         transactionDTO.setType(TransactionType.DEPOSIT);
         try {
+            transactionDTO.setDestinationAccountBank(BankProperties.BANK_CODE);
             TransactionDTO deposit = transactionService.deposit(transactionDTO);
-            return ResponseUtil.handleGenericPostSuccess(deposit, Response.Status.OK);
+            return ResponseUtil.handleGenericResponse(deposit, Response.Status.OK);
         } catch (TransactionException e) {
             return ResponseUtil.handleGenericException(e, Response.Status.BAD_REQUEST);
-        } catch (SQLDataException e) {
-            return ResponseUtil.handleInternalServerError();
-        }catch (ConstraintViolationException e) {
+        } catch (ConstraintViolationException e) {
             return ResponseUtil.handleConstraintViolationException(e);
         }
     }

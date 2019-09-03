@@ -27,7 +27,7 @@ public class ClientController {
     public Response save(ClientDTO client) {
         try {
             ClientDTO saved = clientService.save(client);
-            return ResponseUtil.handleGenericPostSuccess(saved, Response.Status.CREATED);
+            return ResponseUtil.handleGenericResponse(saved, Response.Status.CREATED);
         } catch (ConstraintViolationException e) {
             return ResponseUtil.handleConstraintViolationException(e);
         } catch (EntityExistsException e) {

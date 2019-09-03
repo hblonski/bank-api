@@ -26,6 +26,10 @@ public class BaseTest extends JerseyTest {
     // Default base URI used by jetty-test
     private final static String BASE_URI = "http://localhost:9998/";
 
+    protected HttpResponse postHttpRequest(String path) throws IOException, InterruptedException {
+        return postHttpRequest(path, "");
+    }
+
     protected HttpResponse postHttpRequest(String path, String body) throws IOException, InterruptedException {
         HttpClient httpClient = HttpClient.newBuilder().build();
         HttpRequest request = HttpRequest.newBuilder()
@@ -54,6 +58,14 @@ public class BaseTest extends JerseyTest {
         HttpResponse response = getHttpRequest(path);
         assertEquals(status.getStatusCode(), response.statusCode());
         assertEquals(errorMessage, response.body());
+    }
+
+    protected void sendPostRequestAndVerifyError(
+            String errorMessage,
+            Response.Status status,
+            String path
+    ) throws Exception {
+        sendPostRequestAndVerifyError(errorMessage, status, path, null);
     }
 
     protected void sendPostRequestAndVerifyError(
