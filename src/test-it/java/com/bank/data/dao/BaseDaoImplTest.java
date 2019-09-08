@@ -20,7 +20,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
 @RunWith(MockitoJUnitRunner.class)
-public class BaseDaoTest extends BaseTest {
+public class BaseDaoImplTest extends BaseTest {
 
     private BaseDao baseDao;
 
@@ -55,7 +55,7 @@ public class BaseDaoTest extends BaseTest {
     public void should_findNextSequenceValue() {
         Account account = new AccountDtoToAccountMapper().map(mockAccountDTO());
         baseDao.save(account);
-        Long next = account.getId() + 1;
-        assertEquals(next.toString(), baseDao.getNextSequenceValue(Account.ACCOUNT_ID_SEQUENCE).toString());
+        long next = account.getId() + 1;
+        assertEquals(Long.toString(next), baseDao.getNextSequenceValue(Account.ACCOUNT_ID_SEQUENCE).toString());
     }
 }

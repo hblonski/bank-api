@@ -2,8 +2,8 @@ package com.bank.data.repository;
 
 import com.bank.BaseTest;
 import com.bank.data.dao.BaseDao;
-import com.bank.data.entity.Client;
-import com.bank.mapper.ClientDtoToClientMapper;
+import com.bank.data.entity.Transaction;
+import com.bank.mapper.TransactionDtoToTransactionMapper;
 import org.glassfish.hk2.utilities.binding.AbstractBinder;
 import org.glassfish.jersey.server.ResourceConfig;
 import org.junit.Test;
@@ -15,29 +15,24 @@ import org.mockito.junit.MockitoJUnitRunner;
 import javax.validation.ConstraintViolationException;
 import javax.ws.rs.core.Application;
 
-import java.util.List;
-
-import static junit.framework.TestCase.assertNull;
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
-public class ClientRepositoryTest extends BaseTest {
+public class TransactionRepositoryImplTest extends BaseTest {
 
     @Mock
     private BaseDao baseDao;
 
-    private ClientRepository clientRepository;
+    private TransactionRepository transactionRepository;
 
     @Override
     protected Application configure() {
         MockitoAnnotations.initMocks(this);
-        clientRepository = new ClientRepositoryImpl();
+        transactionRepository = new TransactionRepositoryImpl();
         return new ResourceConfig()
-                .register(clientRepository)
+                .register(transactionRepository)
                 .register(new AbstractBinder() {
                     @Override
                     protected void configure() {
@@ -47,35 +42,20 @@ public class ClientRepositoryTest extends BaseTest {
     }
 
     @Test
-    public void should_returnCreatedClientInfo_when_clientCreated() {
-        Client client = new ClientDtoToClientMapper().map(mockClientDTO());
-        client.setId(null);
+    public void should_returnTransaction_when_transactionSaved() {
+        Transaction transaction = new TransactionDtoToTransactionMapper().map(mockTransactionDTO());
         Long id = 1L;
         when(baseDao.save(any())).thenReturn(id);
-        Client saved = clientRepository.save(client);
+        Transaction saved = transactionRepository.save(transaction);
         assertEquals(id, saved.getId());
     }
 
     @Test(expected = ConstraintViolationException.class)
     public void should_throwException_when_validationError() {
-        Client client = new ClientDtoToClientMapper().map(mockClientDTO());
+        Transaction transaction = new TransactionDtoToTransactionMapper().map(mockTransactionDTO());
         String message = "violation";
         ConstraintViolationException exception = mockViolationException(message);
         when(baseDao.save(any())).thenThrow(exception);
-        clientRepository.save(client);
-    }
-
-    @Test
-    public void should_findByDocumentNumber_when_clientExists() {
-        List<Client> clients = List.of(mock(Client.class));
-        when(baseDao.find(any(Class.class), any())).thenReturn(clients);
-        Client result = clientRepository.findByDocumentNumber("any");
-        assertNotNull(result);
-    }
-
-    @Test
-    public void should_returnNull_when_clientDoesNotExist() {
-        Client result = clientRepository.findByDocumentNumber("any");
-        assertNull(result);
+        transactionRepository.save(transaction);
     }
 }

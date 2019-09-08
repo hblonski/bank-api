@@ -26,7 +26,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
-public class AccountRepositoryTest extends BaseTest {
+public class AccountRepositoryImplTest extends BaseTest {
 
     @Mock
     private BaseDao baseDao;
@@ -65,6 +65,7 @@ public class AccountRepositoryTest extends BaseTest {
     }
 
     @Test
+    @SuppressWarnings("unchecked")
     public void should_returnAccount_when_accountsFound() {
         Account account = new AccountDtoToAccountMapper().map(mockAccountDTO());
         List<Account> accounts = List.of(account);
@@ -74,6 +75,7 @@ public class AccountRepositoryTest extends BaseTest {
     }
 
     @Test
+    @SuppressWarnings("unchecked")
     public void should_returnNull_when_noAccountsFound() {
         assertNull(accountRepository.findByNumberAndBank("123",123));
         when(baseDao.find(any(Class.class), any())).thenReturn(Collections.emptyList());

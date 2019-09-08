@@ -29,7 +29,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
-public class TransactionServiceTest extends BaseTest {
+public class TransactionServiceImplTest extends BaseTest {
 
     @Mock
     private TransactionRepository transactionRepository;
