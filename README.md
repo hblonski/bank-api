@@ -1,4 +1,4 @@
-# Bank API
+# Bank API (moved to https://github.com/hblonski/bank-api-spring)
 
 This is a very simple application that implements some simple bank operations.
 It was built using JAX-RS, Jetty, and Jersey.
